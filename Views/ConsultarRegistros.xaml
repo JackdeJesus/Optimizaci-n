@@ -1,0 +1,629 @@
+﻿<Page x:Class="PoderJudicial.Views.ConsultarRegistros"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Background="{DynamicResource BackgroundBrush}">
+    
+
+    <Page.Resources>
+
+        
+
+        <!-- badge -->
+        <Style x:Key="BadgeStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Botones acción -->
+        <!-- Botones acción -->
+        <Style x:Key="ActionBtnStyle" TargetType="Button">
+
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Background"
+            Value="{DynamicResource ActionButtonBackgroundBrush}"/>
+            <Setter Property="Foreground"
+            Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="btn"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="6">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                             Value="True">
+
+                                <Setter TargetName="btn"
+                                Property="Background"
+                                Value="{DynamicResource ActionButtonHoverBrush}"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed"
+                             Value="True">
+
+                                <Setter TargetName="btn"
+                                Property="Opacity"
+                                Value="0.8"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+    </Page.Resources>
+
+    <Grid Background="{DynamicResource BackgroundBrush}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource CardBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="32,18">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Consultar Registros"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="Bienvenido, Admin Sistema. Visualiza y gestiona los registros."
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               Margin="0,3,0,0"/>
+
+                </StackPanel>
+
+                <!-- Hora desde ViewModel -->
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding Hora}"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               HorizontalAlignment="Right"/>
+
+                    <TextBlock Text="{Binding Fecha}"
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               HorizontalAlignment="Right"
+                               Margin="0,2,0,0"/>
+
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- contenido -->
+        <Grid Grid.Row="1" Margin="32">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- BUSCADOR -->
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="550"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0"
+                        Background="{DynamicResource CardBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Height="42">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="⌕"
+                                   FontSize="14"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                        <Grid Grid.Column="1">
+                            <TextBox x:Name="txtBuscar"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     FontSize="13"
+                                     Foreground="{DynamicResource InputTextBrush}"
+                                     CaretBrush="{DynamicResource PrimaryTextBrush}"
+                                     VerticalContentAlignment="Center"
+                                     Padding="0,0,10,0"
+                                     TextChanged="txtBuscar_TextChanged"
+                                     KeyUp="txtBuscar_KeyUp"
+                                     GotFocus="txtBuscar_GotFocus"
+                                     LostFocus="txtBuscar_LostFocus"/>
+
+                            <Popup x:Name="popupSugerencias"
+                                   PlacementTarget="{Binding ElementName=txtBuscar}"
+                                   Placement="Bottom"
+                                   StaysOpen="False"
+                                   AllowsTransparency="True">
+                                <Border Background="{DynamicResource CardBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Width="360"
+                                        MaxHeight="220">
+                                    <ListBox x:Name="lstSugerencias"
+                                             Background="{DynamicResource CardBrush}"
+                                             Foreground="{DynamicResource PrimaryTextBrush}"
+                                             BorderThickness="0"
+                                             FontSize="13"
+                                             MouseUp="lstSugerencias_MouseUp"
+                                             KeyDown="lstSugerencias_KeyDown">
+                                        <ListBox.ItemContainerStyle>
+                                            <Style TargetType="ListBoxItem">
+
+                                                <Setter Property="Padding" Value="10"/>
+                                                <Setter Property="Cursor" Value="Hand"/>
+
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background"
+                                                                Value="{DynamicResource HoverBrush}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+
+                                            </Style>
+                                        </ListBox.ItemContainerStyle>
+                                    </ListBox>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- TOTALES -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+
+                    <!-- TOTAL REGISTROS -->
+                    <Border Background="{DynamicResource CardBrush}"
+                            CornerRadius="8"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            Padding="14,7"
+                            Margin="0,0,10,0">
+
+                        <TextBlock Text="{Binding TotalRegistros}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    </Border>
+
+                    <!-- TOTAL DISCOS -->
+                    <Border Background="#EFF6FF"
+                            CornerRadius="8"
+                            BorderBrush="#BFDBFE"
+                            BorderThickness="1"
+                            Padding="14,7">
+
+                        <TextBlock Text="{Binding TotalDiscosBusqueda}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1D4ED8"/>
+                    </Border>
+
+                </StackPanel>
+            </Grid>
+            
+            
+            
+            
+
+            <!-- TABLA -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource CardBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    ClipToBounds="True">
+
+                <DataGrid x:Name="dgAudiencias"
+                          ItemsSource="{Binding Audiencias}"
+                          AutoGenerateColumns="False"
+                          FrozenColumnCount="1"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          Background="{DynamicResource CardBrush}"
+                          RowBackground="{DynamicResource CardBrush}"
+                          AlternatingRowBackground="{DynamicResource AltRowBrush}"
+                          Foreground="{DynamicResource PrimaryTextBrush}"
+                          CanUserResizeRows="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="True"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          IsReadOnly="True"
+                          RowHeight="56"
+                          ColumnHeaderHeight="52"
+                          FontSize="13"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+
+                    <!-- ═══ ESTILOS INTERNOS ═══ -->
+                    <DataGrid.Resources>
+                        <Style TargetType="{x:Type DataGridRow}">
+                            <Setter Property="Focusable" Value="False"/>
+                        </Style>
+                        <Style x:Key="ColumnaAccionesStyle" TargetType="DataGridCell">
+                            <Setter Property="Background" Value="{DynamicResource ActionColumnBrush}"/>
+                            <!-- Línea divisora -->
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                            <Setter Property="BorderThickness" Value="0,0,2,0"/>
+                            <Setter Property="Padding" Value="10,0"/>
+                        </Style>
+
+                        <!-- Texto centrado -->
+                        <Style x:Key="CenteredCellText" TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+
+                    </DataGrid.Resources>
+
+                    <!-- HEADER STYLE -->
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+
+                            <Setter Property="Background"
+                                    Value="{DynamicResource HeaderBrush}"/>
+
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource PrimaryTextBrush}"/>
+
+                            <Setter Property="BorderBrush"
+                                    Value="{DynamicResource BorderBrush}"/>
+
+                            <Setter Property="BorderThickness"
+                                    Value="0,0,0,1"/>
+
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <!-- ROW STYLE -->
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+
+                            <Setter Property="BorderBrush"
+                                    Value="{DynamicResource BorderBrush}"/>
+
+                            <Setter Property="BorderThickness"
+                                    Value="0,0,0,1"/>
+
+                            <Style.Triggers>
+
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource HoverBrush}"/>
+
+                                </Trigger>
+
+                            </Style.Triggers>
+
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness"   Value="0"/>
+                            <Setter Property="Padding"           Value="12,0"/>
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource TableRowBrush}"/>
+                            <Setter Property="FocusVisualStyle"  Value="{x:Null}"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <!-- Corrige orientación de todas las celdas -->
+                            <Setter Property="FlowDirection"     Value="LeftToRight"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+
+                                    <Setter Property="Background" Value="{DynamicResource TableRowBrush}"/>
+
+                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                           
+                              
+                            
+                        </DataGrid.CellStyle>
+
+                    <!-- ═══ COLUMNAS ═══ -->
+                    <DataGrid.Columns>
+
+                        <DataGridTemplateColumn Header="Acciones"
+                            Width="120"
+                            CanUserSort="False"
+                            CellStyle="{StaticResource ColumnaAccionesStyle}">
+
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+
+                                    <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                            ToolTip="Ver detalle"
+                            Command="{Binding DataContext.VerCommand,
+                            RelativeSource={RelativeSource AncestorType=Page}}"
+                            CommandParameter="{Binding}">
+
+                                            <TextBlock Text="👁" FontSize="15"
+                                                        Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                        </Button>
+
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                            ToolTip="Editar"
+                            Command="{Binding DataContext.EditarCommand,
+                            RelativeSource={RelativeSource AncestorType=Page}}"
+                            CommandParameter="{Binding}">
+
+                                            <TextBlock Text="✏" FontSize="15"
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                        </Button>
+
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                            ToolTip="Eliminar registro"
+                            Command="{Binding DataContext.EliminarCommand,
+                            RelativeSource={RelativeSource AncestorType=Page}}"
+                            CommandParameter="{Binding}">
+
+                                            <TextBlock Text="🗑"
+                                   FontSize="15"
+                                   Foreground="#DC2626"/>
+                                        </Button>
+
+                                    </StackPanel>
+
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- ID -->
+                        <DataGridTextColumn Header="ID"
+                                            x:Name="ColId"
+                        Width="90"
+                        Binding="{Binding Id}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- FECHA AUDIENCIA -->
+                        <DataGridTextColumn Header="Fecha Audiencia"
+                                            x:Name="ColFechaAudiencia"
+                        Width="180"
+                        Binding="{Binding FechaAudiencia, StringFormat=dd/MM/yyyy HH:mm}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- FECHA RECIBO -->
+                        <DataGridTextColumn Header="Fecha Recibo"
+                                            x:Name="ColFechaRecibo"
+                        Width="180"
+                        Binding="{Binding FechaRecibo, StringFormat=dd/MM/yyyy HH:mm}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- TOTAL DISCOS -->
+                        <DataGridTextColumn Header="Total Discos"
+                                            x:Name="ColTotDiscos"
+                        Width="130"
+                        Binding="{Binding TotDiscos}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- TIPO DISCO -->
+                        <DataGridTextColumn Header="Tipo Disco"
+                                            x:Name="ColTipoDisco"
+                        Width="130"
+                        Binding="{Binding TipoDisco}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- JUZGADO -->
+                        <DataGridTextColumn Header="Juzgado"
+                                            x:Name="ColJuzgado"
+                        Width="200"
+                        Binding="{Binding Juzgado}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- TOTAL DISCO AUDIENCIA -->
+                        <DataGridTextColumn Header="Total Disco Audiencia"
+                                            x:Name="ColTotDiscoAudiencia"
+                        Width="180"
+                        Binding="{Binding TotDiscoAudiencia}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- JUEZ -->
+                        <DataGridTextColumn Header="Juez"
+                                            x:Name="ColJuez"
+                        Width="220"
+                        Binding="{Binding Juez}"/>
+
+                        <!-- EXPEDIENTE -->
+                        <DataGridTextColumn Header="Expediente"
+                        x:Name="ColExpediente"
+Width="180"
+Binding="{Binding Expediente}"
+ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- NO CAUSA -->
+                        <DataGridTextColumn Header="No. Causa"
+                                              x:Name="ColNoCausa" 
+                        Width="150"
+                        Binding="{Binding NoCausa}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                       
+
+                       
+
+                        <!-- NUC -->
+                        <DataGridTextColumn Header="NUC"
+                                            x:Name="ColNUC"
+                        Width="170"
+                        Binding="{Binding NUC}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- TIPO CAUSA -->
+                        <DataGridTextColumn Header="Tipo Causa"
+                                            x:Name="ColTipoCausa"
+                        Width="160"
+                        Binding="{Binding TipoCausa}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- TIPO AUDIENCIA -->
+                        <DataGridTemplateColumn Header="Tipo Audiencia"
+                                                x:Name="ColTipoAudiencia"
+                            Width="220">
+
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+
+                                    <Border Style="{StaticResource BadgeStyle}">
+                                        <TextBlock Text="{Binding TipoAudiencia}"
+                               FontSize="12"
+                               Foreground="{DynamicResource PrimaryTextBrush}" />
+                                    </Border>
+
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- HORA CONCLUSION -->
+                        <DataGridTextColumn Header="Hora Conclusión"
+                                            x:Name="ColHoraConclusion"
+                        Width="170"
+                        Binding="{Binding HoraConclusion}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- IMPUTADO -->
+                        <DataGridTextColumn Header="Imputado"
+                                            x:Name="ColImputado"
+                        Width="250"
+                        Binding="{Binding Imputado}"/>
+
+                        <!-- DELITO -->
+                        <DataGridTextColumn Header="Delito"
+                                            x:Name="ColDelito"
+                        Width="250"
+                        Binding="{Binding Delito}"/>
+
+                        <!-- AGRAVIADO -->
+                        <DataGridTextColumn Header="Agraviado"
+                                            x:Name="ColAgraviado"
+                        Width="250"
+                        Binding="{Binding Agraviado}"/>
+
+                        <!-- SALA -->
+                        <DataGridTextColumn Header="Sala"
+                                            x:Name="ColSala"
+                        Width="120"
+                        Binding="{Binding Sala}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- NO CAUSA JUICIO -->
+                        <DataGridTextColumn Header="No. Causa Juicio"
+                                            x:Name="ColNoCausaJuicio"
+                        Width="180"
+                        Binding="{Binding NoCausaJuicio}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <!-- DIFERIDA -->
+                       
+
+                       
+
+
+                        <DataGridTextColumn
+    x:Name="ColDiscosExternos"
+    Header="Discos Externos"
+    Width="160"
+    Binding="{Binding DiscosExternos}" 
+                             ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <DataGridTextColumn
+    x:Name="ColEtiquetasEntregadas"
+    Header="Etiquetas Entregadas"
+    Width="180"
+    Binding="{Binding EtiquetasEntregadas}" 
+                           ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <DataGridTextColumn
+    x:Name="ColAQuienEntrega"
+    Header="A Quien Se Entrega"
+    Width="220"
+    Binding="{Binding AQuienEntrega}" />
+
+
+                        <!-- OBSERVACIONES -->
+                        <DataGridTextColumn Header="Observaciones"
+                        x:Name="ColObservaciones"
+Width="250"
+Binding="{Binding Observaciones}"/>
+
+                        <!-- QUIEN REALIZA -->
+                        <DataGridTextColumn Header="Quien Realiza"
+                     x:Name="ColQuienRealiza"
+ Width="180"
+ Binding="{Binding QuienRealiza}"
+ ElementStyle="{StaticResource CenteredCellText}"/>
+
+
+
+                    </DataGrid.Columns>
+                </DataGrid>
+                
+                
+                
+            </Border>
+
+        </Grid>
+    </Grid>
+</Page>
